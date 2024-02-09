@@ -1,0 +1,2 @@
+test.sh: 行 4: logs/PSM/PSM.log: 没有那个文件或目录
+test.sh: 行 5: logs/PSM/SMAP_PSM.log: 没有那个文件或目录

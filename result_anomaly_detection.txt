@@ -1,0 +1,69 @@
+anomaly_detection_MSL_GPT4TS_MSL_ftM_sl100_ll48_pl0_dm768_nh8_el2_dl1_df8_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9612, Precision : 0.8182, Recall : 0.8123, F-score : 0.8153 
+
+anomaly_detection_MSL_GPT4TS_MSL_ftM_sl100_ll48_pl0_dm768_nh8_el2_dl1_df8_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9620, Precision : 0.8200, Recall : 0.8201, F-score : 0.8200 
+
+anomaly_detection_MSL_GPT4TS_MSL_ftM_sl100_ll48_pl0_dm768_nh8_el2_dl1_df8_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9625, Precision : 0.8253, Recall : 0.8179, F-score : 0.8216 
+
+anomaly_detection_MSL_GPT4TS_MSL_ftM_sl100_ll48_pl0_dm768_nh8_el2_dl1_df8_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9652, Precision : 0.8349, Recall : 0.8346, F-score : 0.8348 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9779, Precision : 0.7813, Recall : 0.6512, F-score : 0.7104 
+
+SMAP_GPT4TS_SMAP_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9342, Precision : 0.8925, Recall : 0.5521, F-score : 0.6822 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9781, Precision : 0.7851, Recall : 0.6525, F-score : 0.7127 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9783, Precision : 0.7869, Recall : 0.6541, F-score : 0.7144 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9781, Precision : 0.7841, Recall : 0.6532, F-score : 0.7127 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9791, Precision : 0.7961, Recall : 0.6680, F-score : 0.7265 
+
+MSL_GPT4TS_MSL_ftM_sl100_ll48_pl0_dm768_df8_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9658, Precision : 0.8408, Recall : 0.8337, F-score : 0.8372 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9872, Precision : 0.8743, Recall : 0.8079, F-score : 0.8398 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9784, Precision : 0.7901, Recall : 0.6526, F-score : 0.7148 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9791, Precision : 0.7992, Recall : 0.6631, F-score : 0.7248 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9870, Precision : 0.8712, Recall : 0.8074, F-score : 0.8381 
+
+MSL_GPT4TS_MSL_ftM_sl100_ll48_pl0_dm768_df8_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9691, Precision : 0.8326, Recall : 0.8852, F-score : 0.8581 
+
+SMAP_GPT4TS_SMAP_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9842, Precision : 0.9327, Recall : 0.9448, F-score : 0.9387 
+
+SMAP_GPT4TS_SMAP_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9841, Precision : 0.9337, Recall : 0.9429, F-score : 0.9383 
+
+PSM_GPT4TS_PSM_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9777, Precision : 0.9732, Recall : 0.9457, F-score : 0.9592 
+
+PSM_GPT4TS_PSM_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9732, Precision : 0.9598, Recall : 0.9430, F-score : 0.9513 
+
+SWAT_GPT4TS_SWAT_ftM_sl100_ll48_pl0_dm768_df128_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9875, Precision : 0.9305, Recall : 0.9693, F-score : 0.9495 
+
+SWAT_GPT4TS_SWAT_ftM_sl100_ll48_pl0_dm768_df128_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9883, Precision : 0.9434, Recall : 0.9611, F-score : 0.9521 
+
+SMD_GPT4TS_SMD_ftM_sl100_ll48_pl0_dm768_df768_fc1_ebtimeF_dtTrue_test_0  
+Accuracy : 0.9871, Precision : 0.8716, Recall : 0.8082, F-score : 0.8387 
+

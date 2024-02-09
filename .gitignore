@@ -1,0 +1,5 @@
+logs/
+gpt2/
+all_datasets/
+checkpoints/
+*.pth
