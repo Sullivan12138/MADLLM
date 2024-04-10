@@ -109,10 +109,12 @@ class Model(nn.Module):
             x_enc = x_enc + skip_embedding
         
 
-        x_enc = self.output_transfer(x_enc)
+        
         if self.configs.use_feature_embedding:
             x_enc = x_enc + feature_embedding
 
+        x_enc = self.output_transfer(x_enc)
+        
         if self.configs.use_prompt_pool:
             output = self.prompt_layer(x_enc)
             prompt_prefix = output['prompted_embedding']  # (batch_size, prompt_len, d_model)

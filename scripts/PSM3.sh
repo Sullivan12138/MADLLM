@@ -24,8 +24,8 @@ python -u run.py \
   --channels 25 \
   --top_k 5 \
   --prompt_len 5\
-  --pool_size 10 \
+  --pool_size 15 \
   --feature_epochs 10 \
   --feature_lr 0.001 \
   --nb_random_samples 10 \
-  --few_shot True
+  --resume True

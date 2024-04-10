@@ -1,5 +1,3 @@
-
-
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/SMAP \
@@ -19,5 +17,9 @@ python -u run.py \
   --anomaly_ratio 1 \
   --batch_size 128 \
   --learning_rate 0.0005 \
-  --train_epochs 10
+  --train_epochs 5 \
+  --use_feature_embedding True \
+  --use_prompt_pool True \
+  --use_skip_embedding True \
+  --few_shot True
   

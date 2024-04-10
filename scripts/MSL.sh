@@ -1,7 +1,4 @@
-
-
 python -u run.py \
-  --task_name anomaly_detection \
   --is_training 1 \
   --root_path ./all_datasets/MSL \
   --model_id MSL \
@@ -20,4 +17,12 @@ python -u run.py \
   --anomaly_ratio 2 \
   --batch_size 128 \
   --learning_rate 0.0001 \
-  --train_epochs 10
+  --train_epochs 10 \
+  --feature_epochs 10 \
+  --feature_lr 0.001 \
+  --use_feature_embedding True \
+  --use_prompt_pool True \
+  --use_skip_embedding True \
+  --nb_random_samples 15 \
+  --few_shot True
+  

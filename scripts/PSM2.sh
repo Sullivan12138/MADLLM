@@ -19,4 +19,12 @@ python -u run.py \
   --learning_rate 0.0001 \
   --train_epochs 10 \
   --use_feature_embedding True \
-  --use_prompt_embedding True
+  --use_prompt_pool True \
+  --use_skip_embedding True \
+  --channels 25 \
+  --top_k 5 \
+  --prompt_len 5\
+  --pool_size 10 \
+  --feature_epochs 10 \
+  --feature_lr 0.001 \
+  --nb_random_samples 15 

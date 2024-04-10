@@ -42,6 +42,7 @@ class TripleLoss(torch.nn.modules.loss._Loss):
         )
         input = input.squeeze(2)
         representation = encoder(input)  # Anchors representations
+        # print("representation:", representation.shape)
         
         # positive_representation: (batch size x d_model x patch_length)
         # print(type(beginning_samples_pos[0]))
@@ -58,8 +59,8 @@ class TripleLoss(torch.nn.modules.loss._Loss):
         representation = representation.permute(0, 2, 1)
         positive_representation = positive_representation.permute(0, 2, 1)
         loss = -torch.mean(torch.nn.functional.logsigmoid(torch.bmm(
-            representation.view(batch_size * patch_length, 1, d_model),
-            positive_representation.view(batch_size * patch_length, d_model, 1)
+            representation.reshape(batch_size * patch_length, 1, d_model),
+            positive_representation.reshape(batch_size * patch_length, d_model, 1)
         )))
 
         multiplicative_ratio = self.negative_penalty / self.nb_random_samples
@@ -76,8 +77,8 @@ class TripleLoss(torch.nn.modules.loss._Loss):
 
                 loss += multiplicative_ratio * -torch.mean(
                     torch.nn.functional.logsigmoid(-torch.bmm(
-                        representation.view(batch_size * patch_length, 1, d_model),
-                        negative_representation.view(
+                        representation.reshape(batch_size * patch_length, 1, d_model),
+                        negative_representation.reshape(
                             batch_size * patch_length, d_model, 1
                         )
                     ))

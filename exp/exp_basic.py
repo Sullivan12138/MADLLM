@@ -25,7 +25,9 @@ class Exp_Basic(object):
             'GPT4TS': GPT4TS,
         }
         self.device = self._acquire_device()
-        self.model = self._build_model().to(self.device)
+        self.model, self.feature_encoder = self._build_model()
+        self.model = self.model.to(self.device)
+        self.feature_encoder = self.feature_encoder.to(self.device)
 
     def _build_model(self):
         raise NotImplementedError
@@ -52,4 +54,7 @@ class Exp_Basic(object):
         pass
 
     def test(self):
+        pass
+
+    def draw(self):
         pass

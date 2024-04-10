@@ -1,9 +1,9 @@
 python -u run.py \
   --is_training 1 \
-  --root_path ./all_datasets/SMAP \
-  --model_id SMAP \
+  --root_path ./all_datasets/PSM \
+  --model_id PSM \
   --model GPT4TS \
-  --data SMAP \
+  --data PSM \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
@@ -16,8 +16,16 @@ python -u run.py \
   --c_out 25 \
   --anomaly_ratio 1 \
   --batch_size 128 \
-  --learning_rate 0.0005 \
+  --learning_rate 0.0001 \
   --train_epochs 10 \
   --use_feature_embedding True \
-  --use_prompt_embedding True 
-  
+  --use_prompt_pool True \
+  --use_skip_embedding True \
+  --channels 25 \
+  --top_k 5 \
+  --prompt_len 10\
+  --pool_size 10 \
+  --feature_epochs 10 \
+  --feature_lr 0.001 \
+  --nb_random_samples 10 \
+  --resume True

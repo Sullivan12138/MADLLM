@@ -1,5 +1,3 @@
-
-
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/SWaT \
@@ -19,4 +17,11 @@ python -u run.py \
   --anomaly_ratio 1 \
   --batch_size 128 \
   --learning_rate 0.0001 \
-  --train_epochs 10
+  --train_epochs 10 \
+  --use_feature_embedding True \
+  --use_prompt_pool True \
+  --use_skip_embedding True \
+  --nb_random_samples 15 \
+  --feature_epochs 10 \
+  --channels 25 \
+  --few_shot True

@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
+import matplotlib
 
 plt.switch_backend('agg')
 
@@ -76,15 +77,36 @@ class StandardScaler():
         return (data * self.std) + self.mean
 
 
-def visual(true, preds=None, name='./pic/test.pdf'):
+def visual(true, dimensions, preds=None, labels=None, name='./pic/test.pdf'):
     """
     Results visualization
     """
-    plt.figure()
-    plt.plot(true, label='GroundTruth', linewidth=2)
+    plt.rcParams['font.sans-serif'] = ['Times New Roman']
+    SMD_feature_draw = [9, 25, 31, 35]
+    plt.figure(figsize=(8,6))
+    ts_start = 11000
+    count = 0
+    features = 4
+    for i in range(dimensions):
+        if i in SMD_feature_draw:
+            count += 1
+            plt.subplot(features+2, 1, count)
+            plt.xticks([])
+            plt.plot(true[475500:500000, i], linewidth=1)
+            # plt.ylabel(f'feature {count}')
+    count+=1
     if preds is not None:
-        plt.plot(preds, label='Prediction', linewidth=2)
-    plt.legend()
+        plt.subplot(features+2, 1, count)
+        plt.xticks([])
+        plt.plot(preds[475500:500000], linewidth=1, color='darkviolet')
+        # plt.ylabel('prediction')
+        # plt.legend()
+    count+=1
+    if labels is not None:
+        plt.subplot(features+2, 1, count)
+        plt.plot(labels[475500:500000], linewidth=1, color='tomato')
+        # plt.ylabel('groundtruth')
+        # plt.legend()
     plt.savefig(name, bbox_inches='tight')
 
 

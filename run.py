@@ -97,12 +97,22 @@ parser.add_argument('--use_skip_embedding', type=bool, default=False)
 
 # feature embedding
 parser.add_argument('--use_feature_embedding', type=bool, default=False)
+parser.add_argument('--nb_random_samples', type=int, default=10)
+parser.add_argument('--feature_lr', type=float, default=0.001)
+parser.add_argument('--feature_epochs', type=int, default=1)
+parser.add_argument('--channels', type=int, default=25)
 
 # prompt embedding
 parser.add_argument('--top_k', type=int, default=5)
 parser.add_argument('--prompt_len', type=int, default=5)
 parser.add_argument('--pool_size', type=int, default=10)
-parser.add_argument('--use_prompt_embedding', type=bool, default=False)
+parser.add_argument('--use_prompt_pool', type=bool, default=False)
+
+parser.add_argument('--visualize', type=bool, default=False)
+
+parser.add_argument('--resume', type=bool, default=False)
+
+parser.add_argument('--few_shot', type=bool, default=False)
 
 args = parser.parse_args()
 args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
@@ -119,52 +129,151 @@ print(args)
 
 Exp = Exp_Anomaly_Detection
 
-if args.is_training:
+if args.visualize == False and args.is_training:
     for ii in range(args.itr):
         # setting record of experiments
-        setting = '{}_{}_{}_ft{}_sl{}_ll{}_pl{}_dm{}_df{}_fc{}_eb{}_dt{}_{}_{}'.format(
-            args.model_id,
-            args.model,
-            args.data,
-            args.features,
-            args.seq_len,
-            args.label_len,
-            args.pred_len,
-            args.d_model,
-            args.d_ff,
-            args.factor,
-            args.embed,
-            args.distil,
-            args.des, ii)
+        setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}_re{}_fs{}'.format(
+                    args.model_id,
+                    args.model,
+                    args.data,
+                    args.seq_len,
+                    args.d_model,
+                    args.d_ff,
+                    ii,
+                    args.use_skip_embedding,
+                    args.use_feature_embedding,
+                    args.use_prompt_pool,
+                    args.top_k,
+                    args.prompt_len,
+                    args.pool_size,
+                    args.nb_random_samples,
+                    args.feature_lr,
+                    args.feature_epochs,
+                    args.channels,
+                    args.resume,
+                    args.few_shot)
 
-        exp = Exp(args)  # set experiments
-        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-        exp.train(setting)
+        if args.data == "SMD":
+            SMD_file_list = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7', '1-8',
+                             '2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7', '2-8', '2-9',
+                             '3-1', '3-2', '3-3', '3-4', '3-5', '3-6', '3-7', '3-8', '3-9', '3-10', '3-11']
+            accuracys, precisions, recalls, f_scores, auc_scores = [], [], [], [], []
+            for file in SMD_file_list:
+                file = "SMD" + file
+                args.data = file
+                exp = Exp(args)
+                setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.model_id,
+                    args.model,
+                    file,
+                    args.seq_len,
+                    args.d_model,
+                    args.d_ff,
+                    ii,
+                    args.use_skip_embedding,
+                    args.use_feature_embedding,
+                    args.use_prompt_pool,
+                    args.top_k,
+                    args.prompt_len,
+                    args.pool_size,
+                    args.nb_random_samples,
+                    args.feature_lr,
+                    args.feature_epochs,
+                    args.channels)
+                print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
+                exp.train(setting)
 
-        print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-        exp.test(setting)
-        torch.cuda.empty_cache()
-else:
+                print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+                accuracy, precision, recall, f_score, auc_score = exp.test(setting)
+                accuracys.append(accuracy)
+                precisions.append(precision)
+                recalls.append(recall)
+                f_scores.append(f_score)
+                auc_scores.append(auc_score)
+                torch.cuda.empty_cache()
+            accuracy, precision, recall, f_score, auc_score = np.mean(accuracys), np.mean(precisions), np.mean(recalls), np.mean(f_scores), np.mean(auc_scores)
+            setting = '{}_{}_"SMD_average"_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.model_id,
+                    args.model,
+                    args.seq_len,
+                    args.d_model,
+                    args.d_ff,
+                    ii,
+                    args.use_skip_embedding,
+                    args.use_feature_embedding,
+                    args.use_prompt_pool,
+                    args.top_k,
+                    args.prompt_len,
+                    args.pool_size,
+                    args.nb_random_samples,
+                    args.feature_lr,
+                    args.feature_epochs,
+                    args.channels)
+            print("Mean Value:")
+            print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f}, AUC : {:0.4f}".format(
+                accuracy, precision,
+                recall, f_score, auc_score))
+            f = open("result_anomaly_detection.txt", 'a')
+            f.write(setting + "  \n")
+            f.write("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f}, AUC : {:0.4f}".format(
+                accuracy, precision,
+                recall, f_score, auc_score))
+            f.write('\n')
+            f.write('\n')
+            f.close()
+        else:
+            exp = Exp(args)  # set experiments
+            print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
+            exp.train(setting)
+
+            print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
+            exp.test(setting)
+            torch.cuda.empty_cache()
+elif args.visualize == False:
     ii = 0
-    setting = '{}_{}_{}_{}_ft{}_sl{}_ll{}_pl{}_dm{}_nh{}_el{}_dl{}_df{}_fc{}_eb{}_dt{}_{}_{}'.format(
-        args.model_id,
-        args.model,
-        args.data,
-        args.features,
-        args.seq_len,
-        args.label_len,
-        args.pred_len,
-        args.d_model,
-        args.n_heads,
-        args.e_layers,
-        args.d_layers,
-        args.d_ff,
-        args.factor,
-        args.embed,
-        args.distil,
-        args.des, ii)
+    setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.model_id,
+                    args.model,
+                    args.data,
+                    args.seq_len,
+                    args.d_model,
+                    args.d_ff,
+                    ii,
+                    args.use_skip_embedding,
+                    args.use_feature_embedding,
+                    args.use_prompt_pool,
+                    args.top_k,
+                    args.prompt_len,
+                    args.pool_size,
+                    args.nb_random_samples,
+                    args.feature_lr,
+                    args.feature_epochs,
+                    args.channels)
 
     exp = Exp(args)  # set experiments
     print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
     # exp.test(setting, test=1)
+    exp.test('PSM_best', test=1)
     torch.cuda.empty_cache()
+else:
+    exp = Exp(args)
+    ii=0
+    setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.model_id,
+                    args.model,
+                    args.data,
+                    args.seq_len,
+                    args.d_model,
+                    args.d_ff,
+                    ii,
+                    args.use_skip_embedding,
+                    args.use_feature_embedding,
+                    args.use_prompt_pool,
+                    args.top_k,
+                    args.prompt_len,
+                    args.pool_size,
+                    args.nb_random_samples,
+                    args.feature_lr,
+                    args.feature_epochs,
+                    args.channels)
+    exp.draw(setting, args.enc_in, True)

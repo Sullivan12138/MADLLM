@@ -208,6 +208,7 @@ class CausalCNNEncoder(torch.nn.Module):
     def forward(self, x):
         # x: (batch_size x nvars x length)
         x = self.causal_cnn(x)
+        # print(x.shape)
         x = x.permute(0, 2, 1)
         x = self.linear(x)
         x = x.permute(0, 2, 1)

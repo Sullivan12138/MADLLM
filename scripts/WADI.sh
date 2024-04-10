@@ -1,9 +1,9 @@
 python -u run.py \
   --is_training 1 \
-  --root_path ./all_datasets/SWaT \
-  --model_id SWAT \
+  --root_path ./all_datasets/WADI \
+  --model_id WADI \
   --model GPT4TS \
-  --data SWAT \
+  --data WADI \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
@@ -12,11 +12,17 @@ python -u run.py \
   --d_ff 128 \
   --patch_size 1 \
   --stride 1 \
-  --enc_in 51 \
-  --c_out 51 \
+  --enc_in 127 \
+  --c_out 127 \
   --anomaly_ratio 1 \
   --batch_size 128 \
   --learning_rate 0.0001 \
   --train_epochs 10 \
   --use_feature_embedding True \
-  --use_prompt_embedding True
+  --use_prompt_pool True \
+  --use_skip_embedding True \
+  --nb_random_samples 15 \
+  --feature_epochs 10 \
+  --top_k 5 \
+  --pool_size 10 \
+  --few_shot True

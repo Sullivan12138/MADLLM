@@ -1,24 +1,23 @@
 python -u run.py \
   --is_training 1 \
-  --root_path ./all_datasets/SMD \
-  --model_id SMD \
+  --root_path ./all_datasets/NAB \
+  --model_id NAB \
   --model GPT4TS \
-  --data SMD \
+  --data NAB \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
   --d_model 768 \
   --d_ff 768 \
   --gpt_layer 6 \
-  --enc_in 38 \
-  --c_out 38 \
+  --enc_in 1 \
+  --c_out 1 \
   --anomaly_ratio 0.5 \
   --batch_size 128 \
   --patch_size 25 \
   --stride 1 \
-  --train_epochs 10 \
+  --train_epochs 5 \
   --use_feature_embedding True \
   --use_prompt_embedding True \
-  --top_k 10 \
-  --prompt_len 5 \
-  --pool_size 20
+  --use_skip_embedding True \
+  --pool_size 30

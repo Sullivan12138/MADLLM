@@ -5,6 +5,8 @@ from torch.nn.utils import weight_norm
 import math
 
 
+
+
 class PositionalEmbedding(nn.Module):
     def __init__(self, d_model, max_len=5000):
         super(PositionalEmbedding, self).__init__()
@@ -119,7 +121,7 @@ class DataEmbedding(nn.Module):
 
     def forward(self, x, x_mark):
         if x_mark is None:
-            x = self.value_embedding(x) + self.position_embedding(x)
+            x = self.value_embedding(x) + self.position_embedding(x) + self.feature_embedding(x)
         else:
             x = self.value_embedding(
                 x) + self.temporal_embedding(x_mark) + self.position_embedding(x)
