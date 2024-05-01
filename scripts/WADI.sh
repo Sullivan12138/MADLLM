@@ -10,7 +10,7 @@ python -u run.py \
   --gpt_layer 6 \
   --d_model 768 \
   --d_ff 128 \
-  --patch_size 1 \
+  --patch_size 25 \
   --stride 1 \
   --enc_in 127 \
   --c_out 127 \
@@ -18,11 +18,11 @@ python -u run.py \
   --batch_size 128 \
   --learning_rate 0.0001 \
   --train_epochs 10 \
+  --use_skip_embedding True \
   --use_feature_embedding True \
   --use_prompt_pool True \
-  --use_skip_embedding True \
-  --nb_random_samples 15 \
+  --nb_random_samples 10 \
   --feature_epochs 10 \
   --top_k 5 \
-  --pool_size 10 \
-  --few_shot True
+  --pool_size 20 \
+  --prompt_len 20

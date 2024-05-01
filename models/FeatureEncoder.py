@@ -5,6 +5,7 @@ from einops import rearrange
 from models.layers import casual_cnn, triple_loss
 import numpy as np
 import os
+import time
 class FeatureEncoder(nn.Module):
     def __init__(self, in_channels=38, channels=40, negative_penalty=1,
                  epochs=5, lr=0.001, nb_random_samples=5, 
@@ -62,8 +63,12 @@ class FeatureEncoder(nn.Module):
         # Encoder training
         best_loss = float('inf')
         early_stopper = 0
+        
+        train_total_t = 0.0
         while i < self.epochs:
             print("Epoch:",i)
+            i += 1
+            start_t = int(time.time() * 1000)
             # break
             for j, (batch, _) in enumerate(train_loader):
                 if self.cuda:
@@ -79,6 +84,10 @@ class FeatureEncoder(nn.Module):
                 loss.backward()
                 self.optimizer.step()
 
+            
+            end_t = int(time.time() * 1000)
+            train_t = float(end_t - start_t)
+            train_total_t += train_t
             total_loss = []
             self.encoder.eval()
             with torch.no_grad():
@@ -109,9 +118,10 @@ class FeatureEncoder(nn.Module):
             if early_stopper == 3:
                 early_stopper = 0
                 break
-            i += 1
             
         
+        train_average_t = train_total_t / i
+        print(f"average feature embedding training time: {train_average_t}ms")
 
-        return self.encoder
+        return self.encoder, train_average_t
     

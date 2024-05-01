@@ -77,34 +77,46 @@ class StandardScaler():
         return (data * self.std) + self.mean
 
 
-def visual(true, dimensions, preds=None, labels=None, name='./pic/test.pdf'):
+def visual(true, dimensions, preds=None, labels=None, name='./pic/test.svg'):
     """
     Results visualization
     """
     plt.rcParams['font.sans-serif'] = ['Times New Roman']
-    SMD_feature_draw = [9, 25, 31, 35]
-    plt.figure(figsize=(8,6))
-    ts_start = 11000
+    # SMD_feature_draw = [0, 6, 29, 31]
+    SMD_feature_draw = [22, 23, 31, 34]
+    # SMD_feature_draw = [i for i in range(dimensions)]
+    
     count = 0
-    features = 4
+    features = len(SMD_feature_draw)+2
+    plt.figure(figsize=(1*features/0.618,1.3*features))
+    # preds = None
+    ts_start = 10700
+    ts_end = 14000
     for i in range(dimensions):
         if i in SMD_feature_draw:
             count += 1
-            plt.subplot(features+2, 1, count)
+            plt.subplot(features, 1, count)
             plt.xticks([])
-            plt.plot(true[475500:500000, i], linewidth=1)
+            plt.tick_params(axis='y', labelsize=16)
+            
+            plt.plot(true[ts_start:ts_end, i], linewidth=2, color='#4091cf')
             # plt.ylabel(f'feature {count}')
     count+=1
     if preds is not None:
-        plt.subplot(features+2, 1, count)
+        plt.subplot(features, 1, count)
         plt.xticks([])
-        plt.plot(preds[475500:500000], linewidth=1, color='darkviolet')
+        plt.yticks([0,1], labels=['Normal', 'Anomaly'])
+        plt.tick_params(axis='y', labelsize=16)
+        plt.plot(preds[ts_start:ts_end], linewidth=2, color='#992f87')
         # plt.ylabel('prediction')
         # plt.legend()
-    count+=1
+        count+=1
     if labels is not None:
-        plt.subplot(features+2, 1, count)
-        plt.plot(labels[475500:500000], linewidth=1, color='tomato')
+        plt.subplot(features, 1, count)
+        plt.yticks([0,1], labels=['Normal', 'Anomaly'])
+        plt.tick_params(axis='x', labelsize=16)
+        plt.tick_params(axis='y', labelsize=16)
+        plt.plot(labels[ts_start:ts_end], linewidth=2, color='#e1703c')
         # plt.ylabel('groundtruth')
         # plt.legend()
     plt.savefig(name, bbox_inches='tight')

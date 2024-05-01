@@ -18,8 +18,11 @@ python -u run.py \
   --batch_size 128 \
   --learning_rate 0.0005 \
   --train_epochs 5 \
-  --use_feature_embedding True \
-  --use_prompt_pool True \
-  --use_skip_embedding True \
-  --few_shot True
-  
+  --channels 38 \
+  --use_skip_embedding 1 \
+  --use_prompt_pool 1 \
+  --use_feature_embedding 1 \
+  --nb_random_samples 10 \
+  --prompt_len 5 \
+  --top_k 5 \
+  --pool_size 20

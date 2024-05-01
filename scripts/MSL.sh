@@ -20,9 +20,11 @@ python -u run.py \
   --train_epochs 10 \
   --feature_epochs 10 \
   --feature_lr 0.001 \
-  --use_feature_embedding True \
-  --use_prompt_pool True \
   --use_skip_embedding True \
-  --nb_random_samples 15 \
-  --few_shot True
+  --use_prompt_pool True \
+  --use_feature_embedding True \
+  --nb_random_samples 10 \
+  --top_k 10 \
+  --pool_size 20 \
+  --prompt_len 20
   

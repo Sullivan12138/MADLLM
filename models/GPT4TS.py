@@ -80,13 +80,13 @@ class Model(nn.Module):
             bias=True)
         
 
-    def forward(self, x_enc, feature_embedding):
+    def forward(self, x_enc, feature_embedding=None):
         dec_out = self.anomaly_detection(x_enc, feature_embedding) 
         # print("dec_out.shape:",dec_out.shape)
         return dec_out  # [B, L, D]
 
 
-    def anomaly_detection(self, x_enc, feature_embedding):
+    def anomaly_detection(self, x_enc, feature_embedding=None):
         B, L, M = x_enc.shape
         
         # Normalization from Non-stationary Transformer

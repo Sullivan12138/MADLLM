@@ -49,10 +49,14 @@ class Exp_Anomaly_Detection(Exp_Basic):
     def vali(self, vali_data, vali_loader, criterion):
         total_loss = []
         self.model.eval()
+        self.feature_encoder.eval()
         with torch.no_grad():
             for i, (batch_x, _) in enumerate(vali_loader):
                 batch_x = batch_x.float().to(self.device)
-                feature_embedding = self.feature_encoder(batch_x, self.args.patch_size).detach()
+                if self.args.use_feature_embedding:
+                    feature_embedding = self.feature_encoder(batch_x, self.args.patch_size).detach()
+                else:
+                    feature_embedding = None
                 outputs = self.model(batch_x, feature_embedding)
 
                 f_dim = -1 if self.args.features == 'MS' else 0
@@ -70,6 +74,7 @@ class Exp_Anomaly_Detection(Exp_Basic):
         train_data, train_loader = self._get_data(flag='train')
         vali_data, vali_loader = self._get_data(flag='val')
         test_data, test_loader = self._get_data(flag='test')
+        feature_train_average_t = 0.0
 
         path = os.path.join(self.args.checkpoints, setting)
         if not os.path.exists(path):
@@ -79,7 +84,8 @@ class Exp_Anomaly_Detection(Exp_Basic):
             print('Resume from checkpoint...')
             self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join('./checkpoints/' + 'PSM_best', 'feature_checkpoint.pth')))
             self.model.load_state_dict(torch.load(os.path.join('./checkpoints/' + 'PSM_best', 'checkpoint.pth')))
-        self.feature_encoder.fit(train_loader, setting)
+        if self.args.use_feature_embedding:
+            _, feature_train_average_t = self.feature_encoder.fit(train_loader, setting)
         
         time_now = time.time()
 
@@ -89,12 +95,16 @@ class Exp_Anomaly_Detection(Exp_Basic):
         model_optim = self._select_optimizer()
         criterion = self._select_criterion()
 
+        loop_num = 0
+        train_total_t = 0.0
         for epoch in range(self.args.train_epochs):
             iter_count = 0
             train_loss = []
+            loop_num += 1
 
             self.model.train()
             epoch_time = time.time()
+            start_t = int(time.time() * 1000)
             for i, (batch_x, _) in enumerate(train_loader):
                 with torch.autograd.set_detect_anomaly(True):
                     iter_count += 1
@@ -102,9 +112,13 @@ class Exp_Anomaly_Detection(Exp_Basic):
                     model_optim.zero_grad()
 
                     batch_x = batch_x.float().to(self.device)
-                    feature_embedding = self.feature_encoder(batch_x, self.args.patch_size).detach()
-                    
-                    outputs = self.model(batch_x, feature_embedding)
+                    # print("use_feature_embedding:", self.args.use_feature_embedding)
+                    if self.args.use_feature_embedding:
+                        feature_embedding = self.feature_encoder(batch_x, self.args.patch_size).detach()
+
+                        outputs = self.model(batch_x, feature_embedding)
+                    else:
+                        outputs = self.model(batch_x)
 
                     f_dim = -1 if self.args.features == 'MS' else 0 # MS:有监督，M:无监督
                     outputs = outputs[:, :, f_dim:]
@@ -118,9 +132,11 @@ class Exp_Anomaly_Detection(Exp_Basic):
                         print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
                         iter_count = 0
                         time_now = time.time()
-
                     loss.backward()
                     model_optim.step()
+            end_t = int(time.time() * 1000)
+            train_t = end_t - start_t
+            train_total_t += train_t
 
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(train_loss)
@@ -135,11 +151,17 @@ class Exp_Anomaly_Detection(Exp_Basic):
                 break
             adjust_learning_rate(model_optim, epoch + 1, self.args)
 
+
+        train_average_t = train_total_t / loop_num
+        print(f"main model average train time: {train_average_t} ms")
+        train_average_t += feature_train_average_t
+        print(f"total average train time: {train_average_t} ms")
         best_model_path = path + '/' + 'checkpoint.pth'
-        self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'feature_checkpoint.pth')))
+        if self.args.use_feature_embedding:
+            self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'feature_checkpoint.pth')))
         self.model.load_state_dict(torch.load(best_model_path))
 
-        return self.model
+        return self.model, train_average_t
 
     def test(self, setting, test=0):
         test_data, test_loader = self._get_data(flag='test')
@@ -152,13 +174,17 @@ class Exp_Anomaly_Detection(Exp_Basic):
         attens_energy = []
 
         self.model.eval()
+        self.feature_encoder.eval()
         self.anomaly_criterion = nn.MSELoss(reduce=False)
 
         # (1) stastic on the train set
         with torch.no_grad():
             for i, (batch_x, batch_y) in enumerate(train_loader):
                 batch_x = batch_x.float().to(self.device)
-                feature_embedding = self.feature_encoder(batch_x).detach()
+                if self.args.use_feature_embedding:
+                    feature_embedding = self.feature_encoder(batch_x).detach()
+                else:
+                    feature_embedding = None
                 # reconstruction
                 outputs = self.model(batch_x, feature_embedding)
                 # criterion
@@ -174,7 +200,10 @@ class Exp_Anomaly_Detection(Exp_Basic):
         test_labels = []
         for i, (batch_x, batch_y) in enumerate(test_loader):
             batch_x = batch_x.float().to(self.device)
-            feature_embedding = self.feature_encoder(batch_x).detach()
+            if self.args.use_feature_embedding:
+                feature_embedding = self.feature_encoder(batch_x).detach()
+            else: 
+                feature_embedding = None
             # reconstruction
             outputs = self.model(batch_x, feature_embedding)
             # criterion
@@ -233,17 +262,23 @@ class Exp_Anomaly_Detection(Exp_Basic):
 
         if test:
             print('loading model')
+            self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'feature_checkpoint.pth')))
             self.model.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'checkpoint.pth')))
 
         self.model.eval()
         self.anomaly_criterion = nn.MSELoss(reduce=False)
         attens_energy = []
+        self.feature_encoder.eval()
 
         with torch.no_grad():
             for i, (batch_x, batch_y) in enumerate(train_loader):
                 batch_x = batch_x.float().to(self.device)
+                if self.args.use_feature_embedding:
+                    feature_embedding = self.feature_encoder(batch_x).detach()
+                else:
+                    feature_embedding = None
                 # reconstruction
-                outputs = self.model(batch_x)
+                outputs = self.model(batch_x, feature_embedding)
                 # criterion
                 score = torch.mean(self.anomaly_criterion(batch_x, outputs), dim=-1)
                 score = score.detach().cpu().numpy()
@@ -258,8 +293,12 @@ class Exp_Anomaly_Detection(Exp_Basic):
         test_x = []
         for i, (batch_x, batch_y) in enumerate(test_loader):
             batch_x = batch_x.float().to(self.device)
+            if self.args.use_feature_embedding:
+                feature_embedding = self.feature_encoder(batch_x).detach()
+            else:
+                feature_embedding = None
             # reconstruction
-            outputs = self.model(batch_x)
+            outputs = self.model(batch_x, feature_embedding)
             # criterion
             score = torch.mean(self.anomaly_criterion(batch_x, outputs), dim=-1)
             score = score.detach().cpu().numpy()

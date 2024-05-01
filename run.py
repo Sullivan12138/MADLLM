@@ -99,7 +99,7 @@ parser.add_argument('--use_skip_embedding', type=bool, default=False)
 parser.add_argument('--use_feature_embedding', type=bool, default=False)
 parser.add_argument('--nb_random_samples', type=int, default=10)
 parser.add_argument('--feature_lr', type=float, default=0.001)
-parser.add_argument('--feature_epochs', type=int, default=1)
+parser.add_argument('--feature_epochs', type=int, default=10)
 parser.add_argument('--channels', type=int, default=25)
 
 # prompt embedding
@@ -132,7 +132,9 @@ Exp = Exp_Anomaly_Detection
 if args.visualize == False and args.is_training:
     for ii in range(args.itr):
         # setting record of experiments
-        setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}_re{}_fs{}'.format(
+        setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}_re{}_fs{}'.format(
+                    args.patch_size,
+                    args.learning_rate,
                     args.model_id,
                     args.model,
                     args.data,
@@ -154,6 +156,7 @@ if args.visualize == False and args.is_training:
                     args.few_shot)
 
         if args.data == "SMD":
+            total_train_average_t = 0.0
             SMD_file_list = ['1-1', '1-2', '1-3', '1-4', '1-5', '1-6', '1-7', '1-8',
                              '2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7', '2-8', '2-9',
                              '3-1', '3-2', '3-3', '3-4', '3-5', '3-6', '3-7', '3-8', '3-9', '3-10', '3-11']
@@ -162,7 +165,9 @@ if args.visualize == False and args.is_training:
                 file = "SMD" + file
                 args.data = file
                 exp = Exp(args)
-                setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.patch_size,
+                    args.learning_rate,
                     args.model_id,
                     args.model,
                     file,
@@ -181,7 +186,8 @@ if args.visualize == False and args.is_training:
                     args.feature_epochs,
                     args.channels)
                 print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-                exp.train(setting)
+                _, train_average_t = exp.train(setting)
+                total_train_average_t += train_average_t
 
                 print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
                 accuracy, precision, recall, f_score, auc_score = exp.test(setting)
@@ -191,8 +197,12 @@ if args.visualize == False and args.is_training:
                 f_scores.append(f_score)
                 auc_scores.append(auc_score)
                 torch.cuda.empty_cache()
+            train_average_t = total_train_average_t / len(SMD_file_list)
+            print(f"SMD average train time: {train_average_t} ms")
             accuracy, precision, recall, f_score, auc_score = np.mean(accuracys), np.mean(precisions), np.mean(recalls), np.mean(f_scores), np.mean(auc_scores)
-            setting = '{}_{}_"SMD_average"_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+            setting = 'pa{}_lr{}_{}_{}_"SMD_average"_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.patch_size,
+                    args.learning_rate,
                     args.model_id,
                     args.model,
                     args.seq_len,
@@ -231,7 +241,9 @@ if args.visualize == False and args.is_training:
             torch.cuda.empty_cache()
 elif args.visualize == False:
     ii = 0
-    setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+    setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.patch_size,
+                    args.learning_rate,
                     args.model_id,
                     args.model,
                     args.data,
@@ -253,12 +265,16 @@ elif args.visualize == False:
     exp = Exp(args)  # set experiments
     print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
     # exp.test(setting, test=1)
-    exp.test('PSM_best', test=1)
+    model_name = 'SMAP_GPT4TS_SMAP_sl100_dm768_df768_0_seTrue_feTrue_ppTrue_top5_pl5_ps10_nrs10_flr0.001_fepo1_ch25_reFalse_fsTrue(best)'
+    exp.test(model_name, test=1)
     torch.cuda.empty_cache()
 else:
+    args.data = "SMD1-5"
     exp = Exp(args)
     ii=0
-    setting = '{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+    setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                    args.patch_size,
+                    args.learning_rate,
                     args.model_id,
                     args.model,
                     args.data,

@@ -17,7 +17,11 @@ python -u run.py \
   --patch_size 25 \
   --stride 1 \
   --train_epochs 5 \
-  --use_feature_embedding True \
-  --use_prompt_pool True \
-  --use_skip_embedding True \
-  --few_shot True
+  --visualize 1 \
+  --use_feature_embedding 1 \
+  --use_prompt_pool 1 \
+  --use_skip_embedding 1 \
+  --nb_random_samples 10 \
+  --top_k 5 \
+  --pool_size 20 \
+  --prompt_len 20
