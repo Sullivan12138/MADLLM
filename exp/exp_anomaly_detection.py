@@ -338,12 +338,3 @@ class Exp_Anomaly_Detection(Exp_Basic):
             recall, f_score))
 
         visual(test_x, dimensions, pred, gt)
-        # for i, (batch_x, batch_y) in enumerate(test_loader):
-        #     if i==1:
-        #         batch_x = batch_x.to(self.device)
-        #         batch_x = np.array(batch_x.cpu()).reshape(-1, dimensions)
-                
-        #         batch_y = np.array(batch_y).reshape(-1, 1)
-        #         visual(batch_x, dimensions, batch_y, gt[(i*12800):((i+1)*12800)])
-        #         print("image draw")
-        #         break

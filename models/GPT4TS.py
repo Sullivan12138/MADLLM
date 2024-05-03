@@ -33,21 +33,11 @@ class Model(nn.Module):
     
     def __init__(self, configs):
         super(Model, self).__init__()
-        self.is_ln = configs.ln
-        self.pred_len = configs.pred_len
-        self.seq_len = configs.seq_len
         self.patch_size = configs.patch_size
-        self.stride = configs.stride
-        self.seq_len = configs.seq_len
         self.d_ff = configs.d_ff
-        self.patch_num = (configs.seq_len + self.pred_len - self.patch_size) // self.stride + 1
 
-        self.padding_patch_layer = nn.ReplicationPad1d((0, self.stride)) 
-        self.patch_num += 1
         self.enc_in = configs.enc_in
         self.d_model = configs.d_model
-        self.enc_embedding = DataEmbedding(configs.enc_in * self.patch_size, configs.d_model, configs.embed, configs.freq,
-                                           configs.dropout)
 
         self.gpt2 = GPT2Model.from_pretrained('gpt2', output_attentions=True, output_hidden_states=True)
         self.gpt2.h = self.gpt2.h[:configs.gpt_layers]
@@ -116,64 +106,17 @@ class Model(nn.Module):
         if self.configs.use_prompt_pool:
             output = self.prompt_layer(x_enc)
             prompt_prefix = output['prompted_embedding']  # (batch_size, prompt_len, d_model)
-            
-            # enc_out = enc_out.permute(0, 2, 1)
-            # enc_out = self.input_embedding(enc_out)
-            # enc_out = enc_out.permute(0, 2, 1)
+
             x_enc = torch.cat([prompt_prefix, x_enc], dim=1 )
 
             x_enc = x_enc.permute(0, 2, 1)
             x_enc = self.input_embedding(x_enc)
             x_enc = x_enc.permute(0, 2, 1)
 
-        
-
-        
-
-
-
-        # enc_out = torch.nn.functional.pad(x_enc, (0, 768-enc_out.shape[-1]))  # 此处可能未来要改
-
-        # if self.configs.use_feature_embedding:
-        #     enc_out = enc_out + feature_embedding
-        
-        # if self.configs.use_prompt_embedding:
-        #     # prompt_prefix = rearrange(prompt_prefix, 'b (n s) m -> b n s m', s=patch_size)
-        #     # prompt_means = prompt_prefix.mean(2, keepdim=True).detach()
-        #     # prompt_prefix = prompt_prefix - prompt_means
-        #     # prompt_stdev = torch.sqrt(
-        #     #     torch.var(prompt_prefix, dim=2, keepdim=True, unbiased=False) + 1e-5)
-        #     # prompt_prefix /= prompt_stdev
-        #     # prompt_prefix = rearrange(prompt_prefix, 'b n s m -> b (n s) m')  # (batch_size, length, d_model)
-
-        #     prompt_prefix = torch.nn.functional.pad(prompt_prefix, (0, 768-prompt_prefix.shape[-1]))
-        #     enc_out = torch.cat([prompt_prefix, enc_out], dim=1 )
-        #     enc_out = enc_out.permute(0, 2, 1)
-        #     enc_out = self.input_embedding(enc_out)
-        #     enc_out = enc_out.permute(0, 2, 1)
-
-        # enc_out = rearrange(enc_out, 'b (n s) m -> b n s m', s=patch_size)
-        # means = enc_out.mean(2, keepdim=True).detach()
-        # enc_out = enc_out - means
-        # stdev = torch.sqrt(
-        #     torch.var(enc_out, dim=2, keepdim=True, unbiased=False) + 1e-5).detach()
-        # enc_out /= stdev
-        # enc_out = rearrange(enc_out, 'b n s m -> b (n s) m')
-
         dec_out = self.gpt2(inputs_embeds=x_enc).last_hidden_state
-
-        
-        # dec_out = dec_out.permute(0, 2, 1)
-        # dec_out = self.input_embedding(dec_out)
-        # dec_out = dec_out.permute(0, 2, 1)
 
         dec_out = dec_out[:, :, :self.d_ff]
 
-        
-
-        
-
-        # outputs = self.ln_proj(outputs)
         dec_out = self.out_layer(dec_out)
 
         dec_out = rearrange(dec_out, 'b (n s) m -> b n s m', s=patch_size)
@@ -186,20 +129,4 @@ class Model(nn.Module):
                       1, 1, patch_size, 1))
         dec_out = rearrange(dec_out, 'b n s m -> b (n s) m')
 
-        # dec_out = dec_out.permute(0, 2, 1)
-        # dec_out = self.input_embedding(dec_out)
-        # dec_out = dec_out.permute(0, 2, 1)
-
-        
-        
         return dec_out
-
-    
-    # def fit_feature(self, x):
-    #     # x: (train_size x nvars x num_patch x patch_length)
-    #     if self.configs.use_feature_embedding:
-    #         self.feature_embedding.fit(x, patch_size=self.patch_size)
-
-    #     for _, (name, param) in enumerate(self.gpt2.named_parameters()):
-    #         if 'feature_embedding' in name:
-    #             param.requires_grad = False
