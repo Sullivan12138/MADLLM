@@ -3,3 +3,6 @@ gpt2/
 all_datasets/
 checkpoints/
 *.pth
+result_anomaly_detection.txt
+pic/
+preprocess.py
