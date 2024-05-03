@@ -4,9 +4,7 @@ python -u run.py \
   --model_id PSM \
   --model GPT4TS \
   --data PSM \
-  --features M \
   --seq_len 100 \
-  --pred_len 0 \
   --gpt_layer 6 \
   --d_model 768 \
   --d_ff 768 \
@@ -18,9 +16,9 @@ python -u run.py \
   --batch_size 128 \
   --learning_rate 0.0001 \
   --train_epochs 10 \
-  --use_skip_embedding True \
-  --use_feature_embedding True \
-  --use_prompt_pool True \
+  --use_skip_embedding 1 \
+  --use_feature_embedding 1 \
+  --use_prompt_pool 1 \
   --channels 25 \
   --top_k 5 \
   --prompt_len 20 \

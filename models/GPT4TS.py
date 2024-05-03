@@ -10,7 +10,6 @@ from transformers.models.gpt2.modeling_gpt2 import GPT2Model
 from transformers.models.gpt2.configuration_gpt2 import GPT2Config
 from transformers import BertTokenizer, BertModel
 from einops import rearrange
-from layers.Embed import DataEmbedding, DataEmbedding_wo_time
 from models.layers import prompt
 
 class Dataset(torch.utils.data.Dataset):

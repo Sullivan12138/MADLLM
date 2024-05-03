@@ -17,19 +17,15 @@ def data_provider(args, flag):
         file = args.data.strip('SMD')
     else:
         Data = data_dict[args.data]
-    timeenc = 0 if args.embed != 'timeF' else 1
-    percent = args.percent
 
     if flag == 'test':
         shuffle_flag = False
         drop_last = True
         batch_size = args.batch_size
-        freq = args.freq
     else:
         shuffle_flag = True
         drop_last = True
         batch_size = args.batch_size  # bsz for train and valid
-        freq = args.freq
 
     
     drop_last = False

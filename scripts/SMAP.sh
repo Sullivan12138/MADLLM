@@ -4,9 +4,7 @@ python -u run.py \
   --model_id SMAP \
   --model GPT4TS \
   --data SMAP \
-  --features M \
   --seq_len 100 \
-  --pred_len 0 \
   --gpt_layer 6 \
   --d_model 768 \
   --d_ff 768 \

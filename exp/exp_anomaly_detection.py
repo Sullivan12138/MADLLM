@@ -59,7 +59,7 @@ class Exp_Anomaly_Detection(Exp_Basic):
                     feature_embedding = None
                 outputs = self.model(batch_x, feature_embedding)
 
-                f_dim = -1 if self.args.features == 'MS' else 0
+                f_dim = 0
                 outputs = outputs[:, :, f_dim:]
                 pred = outputs.detach().cpu()
                 true = batch_x.detach().cpu()
@@ -120,7 +120,7 @@ class Exp_Anomaly_Detection(Exp_Basic):
                     else:
                         outputs = self.model(batch_x)
 
-                    f_dim = -1 if self.args.features == 'MS' else 0 # MS:有监督，M:无监督
+                    f_dim = 0
                     outputs = outputs[:, :, f_dim:]
                     loss = criterion(outputs, batch_x)
                     train_loss.append(loss.item())

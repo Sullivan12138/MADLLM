@@ -4,9 +4,7 @@ python -u run.py \
   --model_id SMD \
   --model GPT4TS \
   --data SMD \
-  --features M \
   --seq_len 100 \
-  --pred_len 0 \
   --d_model 768 \
   --d_ff 768 \
   --gpt_layer 6 \

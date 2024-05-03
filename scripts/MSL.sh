@@ -4,9 +4,7 @@ python -u run.py \
   --model_id MSL \
   --model GPT4TS \
   --data MSL \
-  --features M \
   --seq_len 100 \
-  --pred_len 0 \
   --gpt_layer 6 \
   --d_model 768 \
   --d_ff 8 \
@@ -20,9 +18,9 @@ python -u run.py \
   --train_epochs 10 \
   --feature_epochs 10 \
   --feature_lr 0.001 \
-  --use_skip_embedding True \
-  --use_prompt_pool True \
-  --use_feature_embedding True \
+  --use_skip_embedding 1 \
+  --use_prompt_pool 1 \
+  --use_feature_embedding 1 \
   --nb_random_samples 10 \
   --top_k 10 \
   --pool_size 20 \
