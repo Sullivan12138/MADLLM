@@ -5,7 +5,8 @@
 - Create a new environment using conda. `conda create -n madllm python=3.8`
 - Activate the environment. `conda activate madllm`
 - Install the required packages. `pip install -r requirements`
-- Download data. You can obtain all the benchmarks from [[here](https://drive.google.com/drive/folders/1dYba8m2W0LWfh6btAjdOphi_dWlbd9lB?usp=sharing)]. You can make a dir called `all_datasets`, put the dir into the root path of MADLLM, and download the benchmarks into the dir.
+- Download data. You can obtain all the benchmarks from [[here](https://drive.google.com/drive/folders/1dYba8m2W0LWfh6btAjdOphi_dWlbd9lB?usp=sharing)]. Note that SWaT and WADI datasets are not listed here according to the privacy license of these two datasets. You can go to this [[website](https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/)] to request these two datasets by filling in the form. 
+You can make a dir called `all_datasets`, put the dir into the root path of MADLLM, and download the benchmarks into the dir.
 
 
 ## Train and Test
