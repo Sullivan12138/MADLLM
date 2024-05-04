@@ -9,7 +9,9 @@
 
 
 ## Train and Test
-We provide the experiment scripts of all benchmarks under the folder `./scripts`. For example, to run the test on dataset MSL, just run `bash ./scripts/MSL.sh`. You can change the configuration of the experiment in the script. Here are explanation of some parameters:
+We provide the experiment scripts of all benchmarks under the folder `./scripts`. 
+
+For example, to run the test on dataset MSL, just run `bash ./scripts/MSL.sh`. You can change the configuration of the experiment in the script. Here are explanation of some parameters:
 ```bash
 --use_skip_embedding     whether use skip embedding
 --use_feature_embedding  whether use feature embedding
@@ -27,5 +29,7 @@ We use the pre-trained GPT2 model as the LLM model. If you cannot download the m
 
 ## Test from Pre-trained Checkpoints
 We also provide the pre-trained checkpoints of MADLLM in [[here](https://drive.google.com/file/d/1CgjZ5tlAwKrgW0bow168tK3iqyzJ_wV6/view?usp=sharing)]. Note that the pre-trained SMD checkpoints is not here because it is a too-large file that our google drive does not have enough space. However, you can train it easily with the bash file we support.
+
 Download the file, unzip it and put it into the './checkpoints/' dir.
+
 For example, to run the experiment of MSL dataset from checkpoint, just write the configuration `--training = 0` into `./scripts/MSL.sh`. Then write the parameter `--model_name` as the pre-trained checkpoints dir name. Finally run `bash ./scripts/MSL.sh`
