@@ -1,7 +1,7 @@
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/SMD \
-  --model_id SMD \
+  --model_name SMD \
   --model GPT4TS \
   --data SMD \
   --seq_len 100 \
@@ -15,11 +15,11 @@ python -u run.py \
   --patch_size 25 \
   --stride 1 \
   --train_epochs 5 \
-  --visualize 1 \
+  --visualize 0 \
   --use_feature_embedding 1 \
   --use_prompt_pool 1 \
   --use_skip_embedding 1 \
   --nb_random_samples 10 \
   --top_k 5 \
-  --pool_size 20 \
-  --prompt_len 20
+  --pool_size 10 \
+  --prompt_len 5

@@ -7,7 +7,7 @@ import numpy as np
 import os
 import time
 class FeatureEncoder(nn.Module):
-    def __init__(self, in_channels=38, channels=40, negative_penalty=1,
+    def __init__(self, checkpoints = './checkpoints', in_channels=38, channels=40, negative_penalty=1,
                  epochs=5, lr=0.001, nb_random_samples=5, 
                  depth=10, 
                  reduced_size=384, out_channels=768, kernel_size=3, cuda=False, gpu=0):
@@ -15,6 +15,7 @@ class FeatureEncoder(nn.Module):
         self.cuda = cuda
         self.gpu = gpu
         self.epochs = epochs
+        self.checkpoints = checkpoints
         # channels = in_channels
         # reduced_size = in_channels
         # out_channels = in_channels
@@ -110,7 +111,7 @@ class FeatureEncoder(nn.Module):
                 best_loss = loss
                 early_stopper = 0
                 print('Save Encoder Model...')
-                path = os.path.join('./checkpoints', setting)
+                path = os.path.join(self.checkpoints, setting)
                 best_model_path = os.path.join(path, 'feature_checkpoint.pth')
                 torch.save(self.encoder.state_dict(), best_model_path)
             else:

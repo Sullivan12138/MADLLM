@@ -14,11 +14,11 @@ parser = argparse.ArgumentParser(description='MADLLM')
 
 # basic config
 parser.add_argument('--is_training', type=int, required=True, default=1, help='status')
-parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
 parser.add_argument('--model', type=str, required=True, default='GPT4TS')
+parser.add_argument('--model_name', type=str, required=True, default='PSM', help='the dir of stored model')
 
 # data loader
-parser.add_argument('--data', type=str, required=True, default='ETTm1', help='dataset type')
+parser.add_argument('--data', type=str, required=True, default='PSM', help='dataset type')
 parser.add_argument('--root_path', type=str, default='./all_datasets/PSM', help='root path of the data file')
 parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
 
@@ -71,10 +71,10 @@ parser.add_argument('--weight', type=float, default=0)
 parser.add_argument('--percent', type=int, default=5)
 
 # skip embedding
-parser.add_argument('--use_skip_embedding', type=bool, default=False)
+parser.add_argument('--use_skip_embedding', type=int, default=0)
 
 # feature embedding
-parser.add_argument('--use_feature_embedding', type=bool, default=False)
+parser.add_argument('--use_feature_embedding', type=int, default=0)
 parser.add_argument('--nb_random_samples', type=int, default=10)
 parser.add_argument('--feature_lr', type=float, default=0.001)
 parser.add_argument('--feature_epochs', type=int, default=10)
@@ -84,13 +84,11 @@ parser.add_argument('--channels', type=int, default=25)
 parser.add_argument('--top_k', type=int, default=5)
 parser.add_argument('--prompt_len', type=int, default=5)
 parser.add_argument('--pool_size', type=int, default=10)
-parser.add_argument('--use_prompt_pool', type=bool, default=False)
+parser.add_argument('--use_prompt_pool', type=int, default=0)
 
-parser.add_argument('--visualize', type=bool, default=False)
+parser.add_argument('--visualize', type=int, default=0)
 
-parser.add_argument('--resume', type=bool, default=False)
-
-parser.add_argument('--few_shot', type=bool, default=False)
+parser.add_argument('--few_shot', type=int, default=0)
 
 args = parser.parse_args()
 args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
@@ -107,13 +105,12 @@ print(args)
 
 Exp = Exp_Anomaly_Detection
 
-if args.visualize == False and args.is_training:
+if not args.visualize and args.is_training:
     for ii in range(args.itr):
         # setting record of experiments
-        setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}_re{}_fs{}'.format(
+        setting = 'pa{}_lr{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}_fs{}'.format(
                     args.patch_size,
                     args.learning_rate,
-                    args.model_id,
                     args.model,
                     args.data,
                     args.seq_len,
@@ -130,7 +127,6 @@ if args.visualize == False and args.is_training:
                     args.feature_lr,
                     args.feature_epochs,
                     args.channels,
-                    args.resume,
                     args.few_shot)
 
         if args.data == "SMD":
@@ -139,14 +135,14 @@ if args.visualize == False and args.is_training:
                              '2-1', '2-2', '2-3', '2-4', '2-5', '2-6', '2-7', '2-8', '2-9',
                              '3-1', '3-2', '3-3', '3-4', '3-5', '3-6', '3-7', '3-8', '3-9', '3-10', '3-11']
             accuracys, precisions, recalls, f_scores, auc_scores = [], [], [], [], []
+            
             for file in SMD_file_list:
                 file = "SMD" + file
                 args.data = file
                 exp = Exp(args)
-                setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+                setting2 = 'pa{}_lr{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
                     args.patch_size,
                     args.learning_rate,
-                    args.model_id,
                     args.model,
                     file,
                     args.seq_len,
@@ -163,12 +159,13 @@ if args.visualize == False and args.is_training:
                     args.feature_lr,
                     args.feature_epochs,
                     args.channels)
-                print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
-                _, train_average_t = exp.train(setting)
+                setting2 = os.path.join(setting, setting2)
+                print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting2))
+                _, train_average_t = exp.train(setting2)
                 total_train_average_t += train_average_t
 
-                print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-                accuracy, precision, recall, f_score, auc_score = exp.test(setting)
+                print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting2))
+                accuracy, precision, recall, f_score, auc_score = exp.test(setting2)
                 accuracys.append(accuracy)
                 precisions.append(precision)
                 recalls.append(recall)
@@ -176,12 +173,12 @@ if args.visualize == False and args.is_training:
                 auc_scores.append(auc_score)
                 torch.cuda.empty_cache()
             train_average_t = total_train_average_t / len(SMD_file_list)
-            print(f"SMD average train time: {train_average_t} ms")
+            train_average_t = train_average_t / 1000
+            print(f"SMD average train time: {train_average_t}s")
             accuracy, precision, recall, f_score, auc_score = np.mean(accuracys), np.mean(precisions), np.mean(recalls), np.mean(f_scores), np.mean(auc_scores)
-            setting = 'pa{}_lr{}_{}_{}_"SMD_average"_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+            setting = 'pa{}_lr{}_{}_"SMD_average"_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
                     args.patch_size,
                     args.learning_rate,
-                    args.model_id,
                     args.model,
                     args.seq_len,
                     args.d_model,
@@ -203,9 +200,9 @@ if args.visualize == False and args.is_training:
                 recall, f_score, auc_score))
             f = open("result_anomaly_detection.txt", 'a')
             f.write(setting + "  \n")
-            f.write("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f}, AUC : {:0.4f}".format(
+            f.write("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f}, AUC : {:0.4f}, Train Time: {:0.4f}s".format(
                 accuracy, precision,
-                recall, f_score, auc_score))
+                recall, f_score, auc_score, train_average_t))
             f.write('\n')
             f.write('\n')
             f.close()
@@ -217,43 +214,27 @@ if args.visualize == False and args.is_training:
             print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
             exp.test(setting)
             torch.cuda.empty_cache()
-elif args.visualize == False:
-    ii = 0
-    setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
-                    args.patch_size,
-                    args.learning_rate,
-                    args.model_id,
-                    args.model,
-                    args.data,
-                    args.seq_len,
-                    args.d_model,
-                    args.d_ff,
-                    ii,
-                    args.use_skip_embedding,
-                    args.use_feature_embedding,
-                    args.use_prompt_pool,
-                    args.top_k,
-                    args.prompt_len,
-                    args.pool_size,
-                    args.nb_random_samples,
-                    args.feature_lr,
-                    args.feature_epochs,
-                    args.channels)
-
+elif not args.visualize:
     exp = Exp(args)  # set experiments
-    print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
-    # exp.test(setting, test=1)
-    model_name = 'SMAP_GPT4TS_SMAP_sl100_dm768_df768_0_seTrue_feTrue_ppTrue_top5_pl5_ps10_nrs10_flr0.001_fepo1_ch25_reFalse_fsTrue(best)'
-    exp.test(model_name, test=1)
-    torch.cuda.empty_cache()
+    if args.data == "SMD":
+        path = os.path.join('./checkpoints', args.model_name)
+        for dir in os.listdir(path):
+            dir = os.path.join(args.model_name, dir)
+            print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(dir))
+            exp.test(dir, test=1)
+            torch.cuda.empty_cache()
+    else:
+        print('>>>>>>>testing : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(args.model_name))
+        # exp.test(setting, test=1)
+        exp.test(args.model_name, test=1)
+        torch.cuda.empty_cache()
 else:
     args.data = "SMD1-5"
     exp = Exp(args)
     ii=0
-    setting = 'pa{}_lr{}_{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
+    setting = 'pa{}_lr{}_{}_{}_sl{}_dm{}_df{}_{}_se{}_fe{}_pp{}_top{}_pl{}_ps{}_nrs{}_flr{}_fepo{}_ch{}'.format(
                     args.patch_size,
                     args.learning_rate,
-                    args.model_id,
                     args.model,
                     args.data,
                     args.seq_len,

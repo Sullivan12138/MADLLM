@@ -1,8 +1,8 @@
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/SMAP \
-  --model_id SMAP \
   --model GPT4TS \
+  --model_name SMAP \
   --data SMAP \
   --seq_len 100 \
   --gpt_layer 6 \
@@ -23,4 +23,4 @@ python -u run.py \
   --nb_random_samples 10 \
   --prompt_len 5 \
   --top_k 5 \
-  --pool_size 20
+  --pool_size 10

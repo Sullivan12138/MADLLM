@@ -1,7 +1,6 @@
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/SWaT \
-  --model_id SWAT \
   --model GPT4TS \
   --data SWAT \
   --seq_len 100 \
@@ -19,7 +18,7 @@ python -u run.py \
   --use_skip_embedding 1 \
   --use_prompt_pool 1 \
   --use_feature_embedding 1 \
-  --nb_random_samples 1 \
+  --nb_random_samples 15 \
   --feature_epochs 10 \
   --channels 25 \
   --prompt_len 5 \

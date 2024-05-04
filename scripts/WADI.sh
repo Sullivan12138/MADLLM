@@ -1,14 +1,13 @@
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/WADI \
-  --model_id WADI \
   --model GPT4TS \
   --data WADI \
   --seq_len 100 \
   --gpt_layer 6 \
   --d_model 768 \
   --d_ff 128 \
-  --patch_size 25 \
+  --patch_size 1 \
   --stride 1 \
   --enc_in 127 \
   --c_out 127 \
@@ -19,8 +18,8 @@ python -u run.py \
   --use_skip_embedding 1 \
   --use_feature_embedding 1 \
   --use_prompt_pool 1 \
-  --nb_random_samples 10 \
+  --nb_random_samples 20 \
   --feature_epochs 10 \
   --top_k 5 \
-  --pool_size 20 \
-  --prompt_len 20
+  --pool_size 10 \
+  --prompt_len 5

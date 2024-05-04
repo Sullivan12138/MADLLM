@@ -1,7 +1,6 @@
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/MSL \
-  --model_id MSL \
   --model GPT4TS \
   --data MSL \
   --seq_len 100 \

@@ -26,7 +26,8 @@ class Exp_Anomaly_Detection(Exp_Basic):
 
     def _build_model(self):
         model = self.model_dict[self.args.model].Model(self.args).float()
-        feature_encoder = FeatureEncoder(in_channels=self.args.enc_in, channels=self.args.channels,
+        feature_encoder = FeatureEncoder(checkpoints=self.args.checkpoints, 
+            in_channels=self.args.enc_in, channels=self.args.channels,
             nb_random_samples=self.args.nb_random_samples, lr=self.args.feature_lr, 
             epochs=self.args.feature_epochs, cuda=True).float()
 
@@ -80,10 +81,6 @@ class Exp_Anomaly_Detection(Exp_Basic):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        if self.args.resume:
-            print('Resume from checkpoint...')
-            self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join('./checkpoints/' + 'PSM_best', 'feature_checkpoint.pth')))
-            self.model.load_state_dict(torch.load(os.path.join('./checkpoints/' + 'PSM_best', 'checkpoint.pth')))
         if self.args.use_feature_embedding:
             _, feature_train_average_t = self.feature_encoder.fit(train_loader, setting)
         
@@ -158,7 +155,7 @@ class Exp_Anomaly_Detection(Exp_Basic):
         print(f"total average train time: {train_average_t} ms")
         best_model_path = path + '/' + 'checkpoint.pth'
         if self.args.use_feature_embedding:
-            self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'feature_checkpoint.pth')))
+            self.feature_encoder.encoder.load_state_dict(torch.load(os.path.join(path, 'feature_checkpoint.pth')))
         self.model.load_state_dict(torch.load(best_model_path))
 
         return self.model, train_average_t

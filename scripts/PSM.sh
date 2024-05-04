@@ -1,7 +1,6 @@
 python -u run.py \
   --is_training 1 \
   --root_path ./all_datasets/PSM \
-  --model_id PSM \
   --model GPT4TS \
   --data PSM \
   --seq_len 100 \
@@ -21,8 +20,8 @@ python -u run.py \
   --use_prompt_pool 1 \
   --channels 25 \
   --top_k 5 \
-  --prompt_len 20 \
-  --pool_size 20 \
+  --prompt_len 5 \
+  --pool_size 10 \
   --feature_epochs 10 \
   --feature_lr 0.001 \
   --nb_random_samples 10
